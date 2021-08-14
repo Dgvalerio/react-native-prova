@@ -1,22 +1,29 @@
 import React, { FC } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
 
-import { StatusBar } from 'expo-status-bar';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
-const { container } = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+import SignIn from './screens/SignIn';
+import SignUp from './screens/SignUp';
+import { RootStackParamList } from './types/navigation';
+
+const Stack = createStackNavigator<RootStackParamList>();
 
 const App: FC = () => (
-  <View style={container}>
-    <Text>Open up App.tsx to start working on your app!</Text>
-    <StatusBar style="auto" />
-  </View>
+  <NavigationContainer>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="SignIn"
+        component={SignIn}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="SignUp"
+        component={SignUp}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+  </NavigationContainer>
 );
 
 export default App;
