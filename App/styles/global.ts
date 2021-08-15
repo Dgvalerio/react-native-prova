@@ -5,6 +5,7 @@ export const theme = {
     backgroundColor: '#F7F7F7',
     textColor: '#707070',
     primary: '#B5C401',
+    danger: '#C45A5A',
   },
 };
 

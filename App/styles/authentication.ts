@@ -9,9 +9,13 @@ export const {
   forget,
   form,
   input,
+  inputError,
   btnPrimary,
   btnSecondary,
   greenBottom,
+  passwordInputRow,
+  passwordInputIcon,
+  passwordInputDontMatch,
 } = StyleSheet.create({
   headerTitle: {
     fontSize: 44,
@@ -47,6 +51,16 @@ export const {
     borderBottomWidth: 2,
     borderBottomColor: '#ebebeb',
   },
+  inputError: {
+    ...text,
+    width: '100%',
+    fontSize: 17,
+    paddingVertical: 26,
+    paddingHorizontal: 30,
+    borderBottomWidth: 2,
+    borderBottomColor: theme.colors.danger,
+    color: theme.colors.danger,
+  },
   forget: {
     color: '#C1C1C1',
     paddingTop: 26,
@@ -68,5 +82,19 @@ export const {
     paddingTop: 20,
     paddingBottom: 33,
     fontWeight: 'bold',
+  },
+  passwordInputRow: {
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+  },
+  passwordInputIcon: {
+    padding: 12,
+    marginLeft: -48,
+  },
+  passwordInputDontMatch: {
+    paddingHorizontal: 30,
+    paddingVertical: 16,
+    color: theme.colors.danger,
   },
 });

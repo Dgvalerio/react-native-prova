@@ -1,17 +1,12 @@
 /* eslint-disable no-alert */
-import React, { FC, useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, { FC, useState } from 'react';
+import { TextInput, TouchableOpacity, View } from 'react-native';
 
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { StatusBar } from 'expo-status-bar';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import Container from '../components/Container';
 import Footer from '../components/Footer';
+import Loading from '../components/Loading';
 import Text from '../components/Text';
 import {
   headerTitle,
@@ -22,48 +17,46 @@ import {
   btnPrimary,
   btnSecondary,
   greenBottom,
+  passwordInputRow,
+  passwordInputIcon,
 } from '../styles/authentication';
 import { theme } from '../styles/global';
 import { SignInProps } from '../types/navigation';
 import { checkEmailIsValid } from '../utils';
 
-const SignIn: FC<SignInProps> = () => {
-  const emailInputRef = useRef<TextInput>(null);
-  const passwordInputRef = useRef<TextInput>(null);
+const SignIn: FC<SignInProps> = ({ navigation }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordSecureEntry, setPasswordSecureEntry] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
   const handlePressSignIn = () => {
     setIsLoading(true);
 
-    if (!emailInputRef.current || !passwordInputRef.current) return;
-
-    const email = emailInputRef.current.props.value;
-    const password = passwordInputRef.current.props.value;
-
     if (!email || !password) {
       alert('Preencha todos os campos!');
+      setIsLoading(false);
       return;
     }
 
     if (!checkEmailIsValid(email)) {
       alert('Insira um e-mail válido!');
+      setIsLoading(false);
       return;
     }
 
     alert(JSON.stringify({ email, password }));
+    setIsLoading(false);
   };
 
   const handlePressForgetPassword = () => alert('Forget Password');
 
-  const handlePressSignUp = () => alert('SignUp');
+  const handlePressSignUp = () => navigation.navigate('SignUp');
 
-  if (isLoading)
-    return (
-      <View>
-        <StatusBar style="auto" />
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
-    );
+  const togglePasswordSecureEntry = () =>
+    setPasswordSecureEntry((prev) => !prev);
+
+  if (isLoading) return <Loading />;
 
   return (
     <Container>
@@ -71,12 +64,32 @@ const SignIn: FC<SignInProps> = () => {
       <View style={greenBottom} />
       <Text style={title}>Authentication</Text>
       <View style={form}>
-        <TextInput style={input} ref={emailInputRef} placeholder="Email" />
         <TextInput
           style={input}
-          ref={passwordInputRef}
-          placeholder="Password"
+          value={email}
+          onChangeText={setEmail}
+          placeholder="Email"
+          keyboardType="email-address"
         />
+        <View style={passwordInputRow}>
+          <TextInput
+            style={input}
+            value={password}
+            onChangeText={setPassword}
+            placeholder="Password"
+            secureTextEntry={passwordSecureEntry}
+          />
+          <TouchableOpacity
+            onPress={togglePasswordSecureEntry}
+            style={passwordInputIcon}
+          >
+            <Feather
+              name={passwordSecureEntry ? 'eye-off' : 'eye'}
+              size={24}
+              color={theme.colors.textColor}
+            />
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity onPress={handlePressForgetPassword}>
           <Text style={forget}>I forget my password</Text>
         </TouchableOpacity>
