@@ -6,6 +6,7 @@ export type RootStackParamList = {
   SignUp: undefined;
   ForgotPassword: undefined;
   ResetPassword: undefined;
+  Home: undefined;
 };
 
 // Page -> Sign In
@@ -56,4 +57,15 @@ export type ResetPasswordScreenNavigationProp = StackNavigationProp<
 export type ResetPasswordProps = {
   route: ResetPasswordScreenRouteProp;
   navigation: ResetPasswordScreenNavigationProp;
+};
+
+// Page -> Home
+export type HomeScreenRouteProp = RouteProp<RootStackParamList, 'Home'>;
+export type HomeScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'Home'
+>;
+export type HomeProps = {
+  route: HomeScreenRouteProp;
+  navigation: HomeScreenNavigationProp;
 };

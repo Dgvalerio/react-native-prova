@@ -1,12 +1,14 @@
 import React, { FC, useState } from 'react';
 import { TextInput, TouchableOpacity, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import Container from '../components/Container';
 import Footer from '../components/Footer';
-import Loading from '../components/Loading';
 import Text from '../components/Text';
+import { signIn } from '../store/auth/actions';
+import { hideLoading, showLoading } from '../store/ui/actions';
 import {
   headerTitle,
   title,
@@ -24,28 +26,27 @@ import { SignInProps } from '../types/navigation';
 import { checkEmailIsValid } from '../utils';
 
 const SignIn: FC<SignInProps> = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordSecureEntry, setPasswordSecureEntry] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
 
   const handlePressSignIn = () => {
-    setIsLoading(true);
+    dispatch(showLoading());
 
     if (!email || !password) {
       alert('Preencha todos os campos!');
-      setIsLoading(false);
+      dispatch(hideLoading());
       return;
     }
 
     if (!checkEmailIsValid(email)) {
       alert('Insira um e-mail válido!');
-      setIsLoading(false);
+      dispatch(hideLoading());
       return;
     }
 
-    alert(JSON.stringify({ email, password }));
-    setIsLoading(false);
+    dispatch(signIn(email, password));
   };
 
   const handlePressForgetPassword = () => navigation.navigate('ForgotPassword');
@@ -54,8 +55,6 @@ const SignIn: FC<SignInProps> = ({ navigation }) => {
 
   const togglePasswordSecureEntry = () =>
     setPasswordSecureEntry((prev) => !prev);
-
-  if (isLoading) return <Loading />;
 
   return (
     <Container>

@@ -1,12 +1,14 @@
 import React, { FC, useEffect, useState } from 'react';
 import { TextInput, TouchableOpacity, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import Container from '../components/Container';
 import Footer from '../components/Footer';
-import Loading from '../components/Loading';
 import Text from '../components/Text';
+import { signUp } from '../store/auth/actions';
+import { hideLoading, showLoading } from '../store/ui/actions';
 import {
   btnPrimary,
   btnSecondary,
@@ -25,6 +27,7 @@ import { SignUpProps } from '../types/navigation';
 import { checkEmailIsValid } from '../utils';
 
 const SignUp: FC<SignUpProps> = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,7 +36,6 @@ const SignUp: FC<SignUpProps> = ({ navigation }) => {
   const [passwordConfirmationSecureEntry, setPasswordConfirmationSecureEntry] =
     useState(true);
   const [passwordsMatch, setPasswordsMatch] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(
     () => setPasswordsMatch(password === passwordConfirmation),
@@ -41,28 +43,27 @@ const SignUp: FC<SignUpProps> = ({ navigation }) => {
   );
 
   const handlePressSignUp = async () => {
-    setIsLoading(true);
+    dispatch(showLoading());
 
     if (!email || !name || !password || !passwordConfirmation) {
       alert('Preencha todos os campos!');
-      setIsLoading(false);
+      dispatch(hideLoading());
       return;
     }
 
     if (!checkEmailIsValid(email)) {
       alert('Insira um e-mail válido!');
-      setIsLoading(false);
+      dispatch(hideLoading());
       return;
     }
 
     if (!password === !passwordConfirmation) {
       alert('As senhas não conferem!');
-      setIsLoading(false);
+      dispatch(hideLoading());
       return;
     }
 
-    alert(JSON.stringify({ name, email, password, passwordConfirmation }));
-    setIsLoading(true);
+    dispatch(signUp(name, email, password, passwordConfirmation));
   };
 
   const handlePressBack = () => navigation.goBack();
@@ -72,8 +73,6 @@ const SignUp: FC<SignUpProps> = ({ navigation }) => {
 
   const togglePasswordConfirmationSecureEntry = () =>
     setPasswordConfirmationSecureEntry((prev) => !prev);
-
-  if (isLoading) return <Loading />;
 
   return (
     <Container>
