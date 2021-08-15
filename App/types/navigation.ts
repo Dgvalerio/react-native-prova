@@ -4,6 +4,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 export type RootStackParamList = {
   SignIn: undefined;
   SignUp: undefined;
+  ForgotPassword: undefined;
+  ResetPassword: undefined;
 };
 
 // Page -> Sign In
@@ -26,4 +28,32 @@ export type SignUpScreenNavigationProp = StackNavigationProp<
 export type SignUpProps = {
   route: SignUpScreenRouteProp;
   navigation: SignUpScreenNavigationProp;
+};
+
+// Page -> Forgot Password
+export type ForgotPasswordScreenRouteProp = RouteProp<
+  RootStackParamList,
+  'ForgotPassword'
+>;
+export type ForgotPasswordScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'ForgotPassword'
+>;
+export type ForgotPasswordProps = {
+  route: ForgotPasswordScreenRouteProp;
+  navigation: ForgotPasswordScreenNavigationProp;
+};
+
+// Page -> Reset Password
+export type ResetPasswordScreenRouteProp = RouteProp<
+  RootStackParamList,
+  'ResetPassword'
+>;
+export type ResetPasswordScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'ResetPassword'
+>;
+export type ResetPasswordProps = {
+  route: ResetPasswordScreenRouteProp;
+  navigation: ResetPasswordScreenNavigationProp;
 };

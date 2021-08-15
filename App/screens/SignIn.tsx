@@ -1,4 +1,3 @@
-/* eslint-disable no-alert */
 import React, { FC, useState } from 'react';
 import { TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -49,7 +48,7 @@ const SignIn: FC<SignInProps> = ({ navigation }) => {
     setIsLoading(false);
   };
 
-  const handlePressForgetPassword = () => alert('Forget Password');
+  const handlePressForgetPassword = () => navigation.navigate('ForgotPassword');
 
   const handlePressSignUp = () => navigation.navigate('SignUp');
 

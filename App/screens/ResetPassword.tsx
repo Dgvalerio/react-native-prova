@@ -15,18 +15,15 @@ import {
   headerTitle,
   input,
   inputError,
-  title,
-  passwordInputRow,
-  passwordInputIcon,
   passwordInputDontMatch,
+  passwordInputIcon,
+  passwordInputRow,
+  title,
 } from '../styles/authentication';
 import { theme } from '../styles/global';
-import { SignUpProps } from '../types/navigation';
-import { checkEmailIsValid } from '../utils';
+import { ResetPasswordProps } from '../types/navigation';
 
-const SignUp: FC<SignUpProps> = ({ navigation }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+const ResetPassword: FC<ResetPasswordProps> = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [passwordSecureEntry, setPasswordSecureEntry] = useState(true);
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
@@ -43,14 +40,8 @@ const SignUp: FC<SignUpProps> = ({ navigation }) => {
   const handlePressSignUp = async () => {
     setIsLoading(true);
 
-    if (!email || !name || !password || !passwordConfirmation) {
+    if (!password || !passwordConfirmation) {
       alert('Preencha todos os campos!');
-      setIsLoading(false);
-      return;
-    }
-
-    if (!checkEmailIsValid(email)) {
-      alert('Insira um e-mail válido!');
       setIsLoading(false);
       return;
     }
@@ -61,11 +52,11 @@ const SignUp: FC<SignUpProps> = ({ navigation }) => {
       return;
     }
 
-    alert(JSON.stringify({ name, email, password, passwordConfirmation }));
+    alert(JSON.stringify({ password, passwordConfirmation }));
     setIsLoading(true);
   };
 
-  const handlePressBack = () => navigation.goBack();
+  const handlePressSignIn = () => navigation.navigate('SignIn');
 
   const togglePasswordSecureEntry = () =>
     setPasswordSecureEntry((prev) => !prev);
@@ -79,21 +70,8 @@ const SignUp: FC<SignUpProps> = ({ navigation }) => {
     <Container>
       <Text style={headerTitle}>TGL</Text>
       <View style={greenBottom} />
-      <Text style={title}>Registration</Text>
+      <Text style={title}>Reset password</Text>
       <View style={form}>
-        <TextInput
-          style={input}
-          value={name}
-          onChangeText={setName}
-          placeholder="Name"
-        />
-        <TextInput
-          style={input}
-          value={email}
-          onChangeText={setEmail}
-          placeholder="Email"
-          keyboardType="email-address"
-        />
         <View style={passwordInputRow}>
           <TextInput
             style={passwordsMatch ? input : inputError}
@@ -145,7 +123,7 @@ const SignUp: FC<SignUpProps> = ({ navigation }) => {
         )}
         <TouchableOpacity onPress={handlePressSignUp}>
           <Text style={btnPrimary}>
-            Register{' '}
+            Reset{' '}
             <MaterialCommunityIcons
               name="arrow-right"
               size={30}
@@ -154,14 +132,14 @@ const SignUp: FC<SignUpProps> = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity onPress={handlePressBack}>
+      <TouchableOpacity onPress={handlePressSignIn}>
         <Text style={btnSecondary}>
           <MaterialCommunityIcons
             name="arrow-left"
             size={30}
             color={theme.colors.textColor}
           />{' '}
-          Back
+          Login
         </Text>
       </TouchableOpacity>
       <Footer />
@@ -169,4 +147,4 @@ const SignUp: FC<SignUpProps> = ({ navigation }) => {
   );
 };
 
-export default SignUp;
+export default ResetPassword;
