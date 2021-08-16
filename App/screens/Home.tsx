@@ -36,7 +36,7 @@ const Home: FC<HomeProps> = () => {
 
   const [bets, setBets] = useState<IBetWithType[]>([]);
   const [types, setTypes] = useState<IType[]>();
-  const [selectedType, setSelectedType] = useState<number>();
+  const [selectedTypes, setSelectedTypes] = useState<number[]>([]);
   const [haveAnyError, setHaveAnyError] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -51,9 +51,9 @@ const Home: FC<HomeProps> = () => {
       });
   }, []);
 
-  const loadBets = useCallback((type_id: number, pg: number) => {
+  const loadBets = useCallback((type_ids: number[], pg: number) => {
     back.bets
-      .index({ page: pg, limit: 5, type_id })
+      .multiIndex({ page: pg, limit: 5, type_ids })
       .then(({ data }) => {
         setBets(
           data.data.map((bet: IBetWithType) => ({
@@ -78,7 +78,7 @@ const Home: FC<HomeProps> = () => {
   useEffect(() => {
     if (types) {
       if (types.length > 0) {
-        setSelectedType(types[0].id);
+        setSelectedTypes([types[0].id]);
         setHaveAnyError(false);
       } else {
         setHaveAnyError(true);
@@ -86,8 +86,8 @@ const Home: FC<HomeProps> = () => {
     }
   }, [types]);
   useEffect(() => {
-    if (selectedType) loadBets(selectedType, page);
-  }, [selectedType, page, loadBets]);
+    loadBets(selectedTypes, page);
+  }, [selectedTypes, page, loadBets]);
 
   if (haveAnyError)
     return (
@@ -111,10 +111,14 @@ const Home: FC<HomeProps> = () => {
       </Container>
     );
 
-  if (!types || !selectedType || !bets) return <Loading />;
+  if (!types || !selectedTypes || !bets) return <Loading />;
 
   const handleChangeSelectedType = (type: number) => {
-    setSelectedType(type);
+    setSelectedTypes((prev) =>
+      prev.indexOf(type) >= 0
+        ? prev.filter((p) => p !== type)
+        : prev.concat(type)
+    );
     setPage(1);
   };
 
@@ -145,12 +149,17 @@ const Home: FC<HomeProps> = () => {
           <ScrollView contentContainerStyle={btnFilters} horizontal>
             {types.map((type) => (
               <TouchableOpacity
-                style={btnType(selectedType === type.id, type.color).btn}
+                style={
+                  btnType(selectedTypes.indexOf(type.id) >= 0, type.color).btn
+                }
                 key={type.type}
                 onPress={() => handleChangeSelectedType(type.id)}
               >
                 <Text
-                  style={btnType(selectedType === type.id, type.color).text}
+                  style={
+                    btnType(selectedTypes.indexOf(type.id) >= 0, type.color)
+                      .text
+                  }
                 >
                   {type.type}
                 </Text>

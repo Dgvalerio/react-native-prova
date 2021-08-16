@@ -120,6 +120,20 @@ export const back = {
       id: number;
       type_id: number;
     }): Promise<AxiosResponse> => api.delete(`${routes.bets(type_id)}/${id}`),
+    multiIndex: ({
+      page,
+      limit,
+      type_ids,
+    }: {
+      page?: number;
+      limit?: number;
+      type_ids?: number[];
+    }): Promise<AxiosResponse> =>
+      api.get(
+        `${routes.multiBets}?page=${page || 1}&limit=${limit || 10}${
+          type_ids && `&type=${type_ids.join(',')}`
+        }`
+      ),
     index: ({
       page,
       limit,
