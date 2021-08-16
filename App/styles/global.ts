@@ -9,7 +9,7 @@ export const theme = {
   },
 };
 
-export const { container, text } = StyleSheet.create({
+export const { container, text, signedContainer } = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.backgroundColor,
@@ -17,6 +17,12 @@ export const { container, text } = StyleSheet.create({
     justifyContent: 'center',
     paddingTop: 34,
     paddingHorizontal: 34,
+  },
+  signedContainer: {
+    flex: 1,
+    backgroundColor: theme.colors.backgroundColor,
+    alignItems: 'stretch',
+    justifyContent: 'flex-start',
   },
   text: {
     color: theme.colors.textColor,

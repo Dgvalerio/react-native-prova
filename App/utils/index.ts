@@ -21,3 +21,16 @@ export const handleError = (
     else alert(defaultMessage);
   } else alert(defaultMessage);
 };
+
+export const formatMoney = (money: number): string => {
+  const aux = `R$ ${money}`.split('.');
+  return `${aux[0]},${`${aux[1]}`.slice(-2)}0`;
+};
+
+export const formatDate = (date: string | Date): string =>
+  `${date}`
+    .split('T')[0]
+    .replace(
+      /([\d]+)-([\d]+)-([\d]+)/gm,
+      (m, p1, p2, p3) => `${p3}/${p2}/${p1}`
+    );

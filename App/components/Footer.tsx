@@ -5,7 +5,7 @@ import Text from './Text';
 
 const Footer: FC = () => (
   <View style={{ padding: 16 }}>
-    <Text>Copyright 2020 Luby Software</Text>
+    <Text style={{ textAlign: 'center' }}>Copyright 2020 Luby Software</Text>
   </View>
 );
 
