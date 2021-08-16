@@ -26,10 +26,10 @@ import {
   filtersContainer,
 } from '../styles/home';
 import { IBetWithType, IType } from '../types/interfaces';
-import { HomeProps } from '../types/navigation';
+import { RecentGamesProps } from '../types/navigation';
 import { formatDate, formatMoney, handleError } from '../utils';
 
-const Home: FC<HomeProps> = () => {
+const Home: FC<RecentGamesProps> = () => {
   const dispatch = useDispatch();
 
   const handleSignOut = () => dispatch(signOut());

@@ -69,3 +69,47 @@ export type HomeProps = {
   route: HomeScreenRouteProp;
   navigation: HomeScreenNavigationProp;
 };
+
+// Authenticated
+// Tab Navigation
+export type AuthStackParamList = {
+  RecentGames: undefined;
+  Account: undefined;
+  NewBet: undefined;
+};
+
+// Page -> RecentGames
+export type RecentGamesScreenRouteProp = RouteProp<
+  AuthStackParamList,
+  'RecentGames'
+>;
+export type RecentGamesScreenNavigationProp = StackNavigationProp<
+  AuthStackParamList,
+  'RecentGames'
+>;
+export type RecentGamesProps = {
+  route: RecentGamesScreenRouteProp;
+  navigation: RecentGamesScreenNavigationProp;
+};
+
+// Page -> Account
+export type AccountScreenRouteProp = RouteProp<AuthStackParamList, 'Account'>;
+export type AccountScreenNavigationProp = StackNavigationProp<
+  AuthStackParamList,
+  'Account'
+>;
+export type AccountProps = {
+  route: AccountScreenRouteProp;
+  navigation: AccountScreenNavigationProp;
+};
+
+// Page -> New Bet
+export type NewBetScreenRouteProp = RouteProp<AuthStackParamList, 'NewBet'>;
+export type NewBetScreenNavigationProp = StackNavigationProp<
+  AuthStackParamList,
+  'NewBet'
+>;
+export type NewBetProps = {
+  route: NewBetScreenRouteProp;
+  navigation: NewBetScreenNavigationProp;
+};
