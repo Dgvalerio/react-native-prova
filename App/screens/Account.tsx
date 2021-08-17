@@ -2,14 +2,11 @@ import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
-import {
-  MaterialIcons,
-  MaterialCommunityIcons,
-  Feather,
-} from '@expo/vector-icons';
+import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 
 import Container from '../components/Container';
 import Footer from '../components/Footer';
+import Header from '../components/Header';
 import Text from '../components/Text';
 import { back } from '../services/api';
 import { signOut, updateUser } from '../store/auth/actions';
@@ -35,21 +32,12 @@ import {
   passwordInputIcon,
   passwordInputRow,
 } from '../styles/authentication';
-import { theme } from '../styles/global';
-import {
-  header,
-  headerIcon,
-  headerLogo,
-  headerLogoGreen,
-  headerLogoTitle,
-  main,
-} from '../styles/home';
+import { theme, main } from '../styles/global';
 import { AccountProps } from '../types/navigation';
 import { checkEmailIsValid, handleError } from '../utils';
 
-const Account: FC<AccountProps> = () => {
+const Account: FC<AccountProps> = ({ navigation }) => {
   const dispatch = useDispatch();
-  const handleSignOut = () => dispatch(signOut());
 
   const { user } = useSelector((state) => state.auth);
 
@@ -136,22 +124,9 @@ const Account: FC<AccountProps> = () => {
   if (!user)
     return (
       <Container>
-        <View style={header}>
-          <View style={headerLogo}>
-            <Text style={headerLogoTitle}>TGL</Text>
-            <View style={headerLogoGreen} />
-          </View>
-          <TouchableOpacity onPress={handleSignOut}>
-            <MaterialIcons
-              name="logout"
-              size={24}
-              color="#C1C1C1"
-              style={headerIcon}
-            />
-          </TouchableOpacity>
-        </View>
+        <Header navigation={navigation} />
         <View style={main}>
-          <Text>Account</Text>
+          <Text style={title}>Account</Text>
           <Text>Você não está logado!</Text>
         </View>
         <Footer />
@@ -199,20 +174,7 @@ const Account: FC<AccountProps> = () => {
 
   return (
     <Container>
-      <View style={header}>
-        <View style={headerLogo}>
-          <Text style={headerLogoTitle}>TGL</Text>
-          <View style={headerLogoGreen} />
-        </View>
-        <TouchableOpacity onPress={handleSignOut}>
-          <MaterialIcons
-            name="logout"
-            size={24}
-            color="#C1C1C1"
-            style={headerIcon}
-          />
-        </TouchableOpacity>
-      </View>
+      <Header navigation={navigation} />
       <View style={main}>
         <View style={accountHeader}>
           <Text style={title}>Account</Text>

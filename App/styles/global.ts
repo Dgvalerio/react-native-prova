@@ -9,7 +9,7 @@ export const theme = {
   },
 };
 
-export const { container, text, signedContainer } = StyleSheet.create({
+export const { container, text, signedContainer, main } = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.backgroundColor,
@@ -28,5 +28,9 @@ export const { container, text, signedContainer } = StyleSheet.create({
     color: theme.colors.textColor,
     fontSize: 16,
     fontStyle: 'italic',
+  },
+  main: {
+    paddingTop: 26,
+    paddingHorizontal: 20,
   },
 });

@@ -1,34 +1,21 @@
 import React, { FC, useEffect, useState } from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
-import {
-  AntDesign,
-  Feather,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from '@expo/vector-icons';
+import { AntDesign, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import Container from '../components/Container';
 import Footer from '../components/Footer';
+import Header from '../components/Header';
 import Loading from '../components/Loading';
 import Text from '../components/Text';
 import { back } from '../services/api';
-import { signOut } from '../store/auth/actions';
-import { hideLoading, showLoading } from '../store/ui/actions';
-import { theme } from '../styles/global';
+import { theme, main } from '../styles/global';
 import {
   btnFilters,
   btnType,
   filtersContainer,
   filtersText,
   flexRow,
-  header,
-  headerIcon,
-  headerLogo,
-  headerLogoGreen,
-  headerLogoTitle,
-  main,
   title,
 } from '../styles/home';
 import {
@@ -57,9 +44,6 @@ import { NewBetProps } from '../types/navigation';
 import { formatDate, formatMoney, handleError } from '../utils';
 
 const NewBet: FC<NewBetProps> = ({ navigation }) => {
-  const dispatch = useDispatch();
-  const handleSignOut = () => dispatch(signOut());
-
   const [totalPrice, setTotalPrice] = useState(0);
   const [cart, setCart] = useState<IBetWithType[]>([]);
   const [types, setTypes] = useState<IType[]>();
@@ -86,8 +70,11 @@ const NewBet: FC<NewBetProps> = ({ navigation }) => {
   if (haveAnyError)
     return (
       <Container>
-        <Text style={title}>New Bet</Text>
-        <Text>There&apos;s nothing around here right now.</Text>
+        <Header navigation={navigation} />
+        <View style={main}>
+          <Text style={title}>New Bet</Text>
+          <Text>There&apos;s nothing around here right now.</Text>
+        </View>
       </Container>
     );
   if (!types || !selectedType) return <Loading />;
@@ -155,7 +142,6 @@ const NewBet: FC<NewBetProps> = ({ navigation }) => {
 
   const handleSaveCart = async () => {
     if (totalPrice > 30) {
-      await dispatch(showLoading());
       back.bets
         .multiCreate(
           cart.map((bet) => ({ numbers: bet.numbers, type_id: bet.type.id }))
@@ -167,8 +153,7 @@ const NewBet: FC<NewBetProps> = ({ navigation }) => {
                 alert(`${e[1] as string}`)
               )
             : alert('Houve um erro ao salvar suas apostas!')
-        )
-        .finally(() => dispatch(hideLoading()));
+        );
     } else {
       alert('Você deve mais que R$ 30,00 em apostas para salvar!');
     }
@@ -184,32 +169,11 @@ const NewBet: FC<NewBetProps> = ({ navigation }) => {
       onSwipeLeft={handleShowCart}
       onSwipeRight={handleHideCart}
     >
-      <View style={header}>
-        <View style={headerLogo}>
-          <Text style={headerLogoTitle}>TGL</Text>
-          <View style={headerLogoGreen} />
-        </View>
-        {(selectedNumbers.length > 0 || cart.length > 0) && (
-          <TouchableOpacity
-            onPress={handleShowCart}
-            style={{ marginLeft: 'auto', padding: 8 }}
-          >
-            <AntDesign
-              name="shoppingcart"
-              size={24}
-              color={theme.colors.primary}
-            />
-          </TouchableOpacity>
-        )}
-        <TouchableOpacity onPress={handleSignOut} style={{ padding: 8 }}>
-          <MaterialIcons
-            name="logout"
-            size={24}
-            color="#C1C1C1"
-            style={headerIcon}
-          />
-        </TouchableOpacity>
-      </View>
+      <Header
+        navigation={navigation}
+        cartButton={selectedNumbers.length > 0 || cart.length > 0}
+        onCartPress={handleShowCart}
+      />
       <View style={main}>
         <Text style={title}>New Bet for loto</Text>
         <View style={filtersContainer}>

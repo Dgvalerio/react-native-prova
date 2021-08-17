@@ -44,41 +44,31 @@ export const {
   },
 });
 
-export const {
-  title,
-  main,
-  btnFilters,
-  filtersText,
-  pagination,
-  filtersContainer,
-} = StyleSheet.create({
-  title: {
-    fontWeight: 'bold',
-    fontSize: 22,
-    textTransform: 'uppercase',
-    marginBottom: 16,
-  },
-  main: {
-    paddingTop: 26,
-    paddingHorizontal: 20,
-  },
-  filtersText: {
-    fontSize: 17,
-    marginBottom: 16,
-  },
-  btnFilters: {
-    flexDirection: 'row',
-    overflow: 'scroll',
-  },
-  filtersContainer: {
-    marginBottom: 26,
-  },
-  pagination: {
-    marginTop: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-});
+export const { title, btnFilters, filtersText, pagination, filtersContainer } =
+  StyleSheet.create({
+    title: {
+      fontWeight: 'bold',
+      fontSize: 22,
+      textTransform: 'uppercase',
+      marginBottom: 16,
+    },
+    filtersText: {
+      fontSize: 17,
+      marginBottom: 16,
+    },
+    btnFilters: {
+      flexDirection: 'row',
+      overflow: 'scroll',
+    },
+    filtersContainer: {
+      marginBottom: 26,
+    },
+    pagination: {
+      marginTop: 16,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+  });
 
 export const betItem = (color: string): StyleProp<any> => {
   const { before, item, textColor, textBold, content } = StyleSheet.create({

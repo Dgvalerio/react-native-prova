@@ -1,23 +1,17 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
-import { Feather, MaterialIcons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 
 import Container from '../components/Container';
 import Footer from '../components/Footer';
+import Header from '../components/Header';
 import Loading from '../components/Loading';
 import Text from '../components/Text';
 import { back } from '../services/api';
-import { signOut } from '../store/auth/actions';
+import { main } from '../styles/global';
 import {
-  header,
-  headerIcon,
-  headerLogo,
-  headerLogoGreen,
-  headerLogoTitle,
   title,
-  main,
   btnFilters,
   btnType,
   filtersText,
@@ -29,11 +23,7 @@ import { IBetWithType, IType } from '../types/interfaces';
 import { RecentGamesProps } from '../types/navigation';
 import { formatDate, formatMoney, handleError } from '../utils';
 
-const Home: FC<RecentGamesProps> = () => {
-  const dispatch = useDispatch();
-
-  const handleSignOut = () => dispatch(signOut());
-
+const Home: FC<RecentGamesProps> = ({ navigation }) => {
   const [bets, setBets] = useState<IBetWithType[]>([]);
   const [types, setTypes] = useState<IType[]>();
   const [selectedTypes, setSelectedTypes] = useState<number[]>([]);
@@ -92,22 +82,11 @@ const Home: FC<RecentGamesProps> = () => {
   if (haveAnyError)
     return (
       <Container>
-        <View style={header}>
-          <View style={headerLogo}>
-            <Text style={headerLogoTitle}>TGL</Text>
-            <View style={headerLogoGreen} />
-          </View>
-          <TouchableOpacity onPress={handleSignOut}>
-            <MaterialIcons
-              name="logout"
-              size={24}
-              color="#C1C1C1"
-              style={headerIcon}
-            />
-          </TouchableOpacity>
+        <Header navigation={navigation} />
+        <View style={main}>
+          <Text style={title}>Recent Games</Text>
+          <Text>You have no bets.</Text>
         </View>
-        <Text style={title}>Recent Games</Text>
-        <Text>You have no bets.</Text>
       </Container>
     );
 
@@ -132,20 +111,7 @@ const Home: FC<RecentGamesProps> = () => {
 
   return (
     <Container onRefresh={handleRefresh}>
-      <View style={header}>
-        <View style={headerLogo}>
-          <Text style={headerLogoTitle}>TGL</Text>
-          <View style={headerLogoGreen} />
-        </View>
-        <TouchableOpacity onPress={handleSignOut}>
-          <MaterialIcons
-            name="logout"
-            size={24}
-            color="#C1C1C1"
-            style={headerIcon}
-          />
-        </TouchableOpacity>
-      </View>
+      <Header navigation={navigation} />
       <View style={main}>
         <Text style={title}>Recent Games</Text>
         <View style={filtersContainer}>
