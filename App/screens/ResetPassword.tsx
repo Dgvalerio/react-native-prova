@@ -46,7 +46,7 @@ const ResetPassword: FC<ResetPasswordProps> = ({ navigation }) => {
       return;
     }
 
-    if (!password === !passwordConfirmation) {
+    if (password !== passwordConfirmation) {
       alert('As senhas não conferem!');
       setIsLoading(false);
       return;
