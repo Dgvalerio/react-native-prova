@@ -1,5 +1,6 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { Feather } from '@expo/vector-icons';
 
@@ -9,6 +10,7 @@ import Header from '../components/Header';
 import Loading from '../components/Loading';
 import Text from '../components/Text';
 import { back } from '../services/api';
+import { hideLoading, showLoading } from '../store/ui/actions';
 import { main } from '../styles/global';
 import {
   title,
@@ -24,6 +26,8 @@ import { RecentGamesProps } from '../types/navigation';
 import { formatDate, formatMoney, handleError } from '../utils';
 
 const Home: FC<RecentGamesProps> = ({ navigation }) => {
+  const dispatch = useDispatch();
+
   const [bets, setBets] = useState<IBetWithType[]>([]);
   const [types, setTypes] = useState<IType[]>();
   const [selectedTypes, setSelectedTypes] = useState<number[]>([]);
@@ -32,16 +36,19 @@ const Home: FC<RecentGamesProps> = ({ navigation }) => {
   const [totalPages, setTotalPages] = useState(1);
 
   const loadTypes = useCallback(() => {
+    dispatch(showLoading());
     back.types
       .index({})
       .then(({ data }) => setTypes(data))
       .catch((error) => {
         handleError(error, 'Houve um problema ao carregar os tipos de aposta.');
         setHaveAnyError(true);
-      });
+      })
+      .finally(() => dispatch(hideLoading()));
   }, []);
 
   const loadBets = useCallback((type_ids: number[], pg: number) => {
+    dispatch(showLoading());
     back.bets
       .multiIndex({ page: pg, limit: 5, type_ids })
       .then(({ data }) => {
@@ -61,7 +68,8 @@ const Home: FC<RecentGamesProps> = ({ navigation }) => {
       .catch((error) => {
         handleError(error, 'Houve um problema ao carregar as apostas.');
         setHaveAnyError(true);
-      });
+      })
+      .finally(() => dispatch(hideLoading()));
   }, []);
 
   useEffect(() => loadTypes(), []);

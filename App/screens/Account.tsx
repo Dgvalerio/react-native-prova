@@ -10,6 +10,7 @@ import Header from '../components/Header';
 import Text from '../components/Text';
 import { back } from '../services/api';
 import { signOut, updateUser } from '../store/auth/actions';
+import { hideLoading, showLoading } from '../store/ui/actions';
 import {
   accountHeader,
   titleButton,
@@ -54,27 +55,33 @@ const Account: FC<AccountProps> = ({ navigation }) => {
     useState(true);
 
   const loadUser = useCallback(() => {
+    dispatch(showLoading());
     if (!user) return;
     setEmail(user.email);
     setName(user.name);
+    dispatch(hideLoading());
   }, [user]);
 
-  useEffect(() => {
-    loadUser();
-  }, [loadUser, user]);
+  useEffect(() => loadUser(), [loadUser, user]);
 
   let passwordsMatch = false;
 
   const handleSubmit = async () => {
-    if (!user) return;
+    dispatch(showLoading());
+    if (!user) {
+      dispatch(hideLoading());
+      return;
+    }
 
     if (!email || !name) {
       alert('Preencha todos os campos!');
+      dispatch(hideLoading());
       return;
     }
 
     if (!checkEmailIsValid(email)) {
       alert('Insira um e-mail válido!');
+      dispatch(hideLoading());
       return;
     }
 
@@ -83,6 +90,7 @@ const Account: FC<AccountProps> = ({ navigation }) => {
       (!newPassword || !confirmNewPassword || !passwordsMatch)
     ) {
       alert('Nova senha inválida!');
+      dispatch(hideLoading());
       return;
     }
 
@@ -118,7 +126,8 @@ const Account: FC<AccountProps> = ({ navigation }) => {
         setIsEditing(false);
         setIsEditingPassword(false);
       })
-      .catch((error) => handleError(error, 'Erro ao atualizar usuário!'));
+      .catch((error) => handleError(error, 'Erro ao atualizar usuário!'))
+      .finally(() => dispatch(hideLoading()));
   };
 
   if (!user)
@@ -137,9 +146,14 @@ const Account: FC<AccountProps> = ({ navigation }) => {
   const handleToggleEditPassword = () =>
     setIsEditingPassword((prevState) => !prevState);
 
-  const handleDeleteAccount = () =>
+  const handleDeleteAccount = () => {
+    dispatch(showLoading());
     Alert.alert('Você tem certeza?', 'Essa ação não poderá ser desfeita!', [
-      { text: 'Não, cancele!', style: 'cancel' },
+      {
+        text: 'Não, cancele!',
+        style: 'cancel',
+        onPress: () => dispatch(hideLoading()),
+      },
       {
         text: 'Sim, delete!',
         onPress: () =>
@@ -159,9 +173,11 @@ const Account: FC<AccountProps> = ({ navigation }) => {
             )
             .catch((error) =>
               handleError(error, 'Houve um problema ao deletar o usuário.')
-            ),
+            )
+            .finally(() => dispatch(hideLoading())),
       },
     ]);
+  };
 
   const togglePasswordSecureEntry = () =>
     setPasswordSecureEntry((prev) => !prev);
@@ -173,7 +189,7 @@ const Account: FC<AccountProps> = ({ navigation }) => {
     isEditing && isEditingPassword ? newPassword === confirmNewPassword : true;
 
   return (
-    <Container>
+    <Container onRefresh={loadUser}>
       <Header navigation={navigation} />
       <View style={main}>
         <View style={accountHeader}>

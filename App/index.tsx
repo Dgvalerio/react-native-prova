@@ -100,8 +100,6 @@ const Navigation: FC = () => {
   const { signed } = useSelector((state) => state.auth);
   const { loading } = useSelector((state) => state.ui);
 
-  if (loading) return <Loading />;
-
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName={signed ? 'Home' : 'SignIn'}>
@@ -138,6 +136,7 @@ const Navigation: FC = () => {
           </>
         )}
       </Stack.Navigator>
+      {loading && <Loading />}
     </NavigationContainer>
   );
 };

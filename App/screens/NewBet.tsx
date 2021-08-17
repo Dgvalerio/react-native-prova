@@ -1,5 +1,6 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { AntDesign, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -9,6 +10,7 @@ import Header from '../components/Header';
 import Loading from '../components/Loading';
 import Text from '../components/Text';
 import { back } from '../services/api';
+import { hideLoading, showLoading } from '../store/ui/actions';
 import { theme, main } from '../styles/global';
 import {
   btnFilters,
@@ -44,6 +46,8 @@ import { NewBetProps } from '../types/navigation';
 import { formatDate, formatMoney, handleError } from '../utils';
 
 const NewBet: FC<NewBetProps> = ({ navigation }) => {
+  const dispatch = useDispatch();
+
   const [totalPrice, setTotalPrice] = useState(0);
   const [cart, setCart] = useState<IBetWithType[]>([]);
   const [types, setTypes] = useState<IType[]>();
@@ -52,15 +56,17 @@ const NewBet: FC<NewBetProps> = ({ navigation }) => {
   const [haveAnyError, setHaveAnyError] = useState(false);
   const [cartVisible, setCartVisible] = useState(false);
 
-  const loadTypes = () => {
+  const loadTypes = useCallback(() => {
+    dispatch(showLoading());
     back.types
       .index({})
       .then(({ data }) => setTypes(data))
       .catch((error) => {
         handleError(error, 'Houve um problema ao carregar os tipos de aposta.');
         setHaveAnyError(true);
-      });
-  };
+      })
+      .finally(() => dispatch(hideLoading()));
+  }, []);
 
   useEffect(() => loadTypes(), []);
   useEffect(() => {
@@ -142,6 +148,7 @@ const NewBet: FC<NewBetProps> = ({ navigation }) => {
 
   const handleSaveCart = async () => {
     if (totalPrice > 30) {
+      dispatch(showLoading());
       back.bets
         .multiCreate(
           cart.map((bet) => ({ numbers: bet.numbers, type_id: bet.type.id }))
@@ -153,7 +160,8 @@ const NewBet: FC<NewBetProps> = ({ navigation }) => {
                 alert(`${e[1] as string}`)
               )
             : alert('Houve um erro ao salvar suas apostas!')
-        );
+        )
+        .finally(() => dispatch(hideLoading()));
     } else {
       alert('Você deve mais que R$ 30,00 em apostas para salvar!');
     }
@@ -165,6 +173,7 @@ const NewBet: FC<NewBetProps> = ({ navigation }) => {
 
   return (
     <Container
+      onRefresh={loadTypes}
       scrollable={!cartVisible}
       onSwipeLeft={handleShowCart}
       onSwipeRight={handleHideCart}

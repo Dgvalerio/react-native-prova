@@ -7,6 +7,9 @@ import { StatusBar } from 'expo-status-bar';
 import { container, signedContainer } from '../styles/global';
 import { useSwipe } from '../utils/hooks';
 
+const wait = (timeout: number) =>
+  new Promise((resolve) => setTimeout(resolve, timeout));
+
 const Container: FC<{
   scrollable?: boolean;
   onSwipeLeft?: () => void;
@@ -27,7 +30,7 @@ const Container: FC<{
   const handleRefresh = React.useCallback(async () => {
     setRefreshing(true);
     if (onRefresh) await onRefresh();
-    setRefreshing(false);
+    wait(2000).then(() => setRefreshing(false));
   }, []);
 
   return (
