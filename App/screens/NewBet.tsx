@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { Animated, ScrollView, TouchableOpacity, View } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 
@@ -46,23 +46,25 @@ import { IBetWithType, IType } from '../types/interfaces';
 import { NewBetProps } from '../types/navigation';
 import { formatDate, formatMoney, handleError, wait } from '../utils';
 
-const CartOverview: FC<{
-  swipeableRef: React.RefObject<Swipeable>;
+const Cart: FC<{
+  swipeRef: React.RefObject<Swipeable>;
   onCart: boolean;
-}> = ({ swipeableRef, onCart }) => {
+  to: 'open' | 'close';
+}> = ({ onCart, swipeRef, to }) => {
   useEffect(() => {
-    wait(1000).then(() => swipeableRef.current && swipeableRef.current.close());
+    wait(10).then(() => swipeRef.current && swipeRef.current.close());
   }, [onCart]);
 
   return (
     <View
       style={{
-        padding: 16,
+        padding: 12,
         justifyContent: 'center',
-        backgroundColor: theme.colors.primary,
+        backgroundColor:
+          to === 'open' ? theme.colors.primary : theme.colors.danger,
       }}
     >
-      <AntDesign name="shoppingcart" size={36} color="#fff" />
+      <AntDesign name="shoppingcart" size={32} color="#fff" />
     </View>
   );
 };
@@ -70,7 +72,7 @@ const CartOverview: FC<{
 const NewBet: FC<NewBetProps> = ({ navigation }) => {
   const dispatch = useDispatch();
 
-  const swipeableRef = useRef<Swipeable>(null);
+  const swipeRef = useRef<Swipeable>(null);
 
   const [totalPrice, setTotalPrice] = useState(0);
   const [cart, setCart] = useState<IBetWithType[]>([]);
@@ -197,9 +199,13 @@ const NewBet: FC<NewBetProps> = ({ navigation }) => {
 
   return (
     <Swipeable
-      ref={swipeableRef}
+      ref={swipeRef}
+      renderLeftActions={() => (
+        <Cart to="close" swipeRef={swipeRef} onCart={cartVisible} />
+      )}
+      onSwipeableLeftWillOpen={() => setCartVisible(false)}
       renderRightActions={() => (
-        <CartOverview swipeableRef={swipeableRef} onCart={cartVisible} />
+        <Cart to="open" swipeRef={swipeRef} onCart={cartVisible} />
       )}
       onSwipeableRightWillOpen={() => setCartVisible(true)}
     >
@@ -295,7 +301,7 @@ const NewBet: FC<NewBetProps> = ({ navigation }) => {
           </View>
         </View>
         {cartVisible && (
-          <View style={cartOverview}>
+          <Animated.View style={cartOverview}>
             <View style={cartView}>
               <View style={cartHeader}>
                 <AntDesign
@@ -383,7 +389,7 @@ const NewBet: FC<NewBetProps> = ({ navigation }) => {
                 </Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </Animated.View>
         )}
         <Footer />
       </Container>
