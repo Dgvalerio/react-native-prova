@@ -1,5 +1,6 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { Swipeable } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 
 import { AntDesign, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -43,10 +44,33 @@ import {
 } from '../styles/newBet';
 import { IBetWithType, IType } from '../types/interfaces';
 import { NewBetProps } from '../types/navigation';
-import { formatDate, formatMoney, handleError } from '../utils';
+import { formatDate, formatMoney, handleError, wait } from '../utils';
+
+const CartOverview: FC<{
+  swipeableRef: React.RefObject<Swipeable>;
+  onCart: boolean;
+}> = ({ swipeableRef, onCart }) => {
+  useEffect(() => {
+    wait(1000).then(() => swipeableRef.current && swipeableRef.current.close());
+  }, [onCart]);
+
+  return (
+    <View
+      style={{
+        padding: 16,
+        justifyContent: 'center',
+        backgroundColor: theme.colors.primary,
+      }}
+    >
+      <AntDesign name="shoppingcart" size={36} color="#fff" />
+    </View>
+  );
+};
 
 const NewBet: FC<NewBetProps> = ({ navigation }) => {
   const dispatch = useDispatch();
+
+  const swipeableRef = useRef<Swipeable>(null);
 
   const [totalPrice, setTotalPrice] = useState(0);
   const [cart, setCart] = useState<IBetWithType[]>([]);
@@ -172,193 +196,198 @@ const NewBet: FC<NewBetProps> = ({ navigation }) => {
   const handleHideCart = () => setCartVisible(false);
 
   return (
-    <Container
-      onRefresh={loadTypes}
-      scrollable={!cartVisible}
-      onSwipeLeft={handleShowCart}
-      onSwipeRight={handleHideCart}
+    <Swipeable
+      ref={swipeableRef}
+      renderRightActions={() => (
+        <CartOverview swipeableRef={swipeableRef} onCart={cartVisible} />
+      )}
+      onSwipeableRightWillOpen={() => setCartVisible(true)}
     >
-      <Header
-        navigation={navigation}
-        cartButton={selectedNumbers.length > 0 || cart.length > 0}
-        onCartPress={handleShowCart}
-      />
-      <View style={main}>
-        <Text style={title}>New Bet for loto</Text>
-        <View style={filtersContainer}>
-          <Text style={filtersText}>Choose a game</Text>
-          <ScrollView contentContainerStyle={btnFilters} horizontal>
-            {types.map((type) => (
-              <TouchableOpacity
-                style={btnType(selectedType.id === type.id, type.color).btn}
-                key={type.type}
-                onPress={() => handleChangeSelectedType(type.type)}
-              >
-                <Text
-                  style={btnType(selectedType.id === type.id, type.color).text}
-                >
-                  {type.type}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-        {selectedNumbers.length > 0 ? (
-          <>
-            <View style={numbersButtons}>
-              {selectedNumbers.map((number) => (
+      <Container onRefresh={loadTypes} scrollable={!cartVisible}>
+        <Header
+          navigation={navigation}
+          cartButton={selectedNumbers.length > 0 || cart.length > 0}
+          onCartPress={handleShowCart}
+        />
+        <View style={main}>
+          <Text style={title}>New Bet for loto</Text>
+          <View style={filtersContainer}>
+            <Text style={filtersText}>Choose a game</Text>
+            <ScrollView contentContainerStyle={btnFilters} horizontal>
+              {types.map((type) => (
                 <TouchableOpacity
-                  style={miniNumberButton(selectedType.color).btn}
-                  key={number}
-                  onPress={() => handleSelectNumber(`${number}`)}
+                  style={btnType(selectedType.id === type.id, type.color).btn}
+                  key={type.type}
+                  onPress={() => handleChangeSelectedType(type.type)}
                 >
-                  <Text style={miniNumberButton(selectedType.color).txt}>
-                    {`0${number}`.slice(-2)}
+                  <Text
+                    style={
+                      btnType(selectedType.id === type.id, type.color).text
+                    }
+                  >
+                    {type.type}
                   </Text>
                 </TouchableOpacity>
               ))}
-            </View>
-            <View style={buttons}>
-              <TouchableOpacity onPress={handleCompleteGame} style={button}>
-                <Text style={buttonText}>Complete game</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleClearGame} style={button}>
-                <Text style={buttonText}>Clear game</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleAddToCart} style={greenButton}>
-                <Text style={greenButtonText}>Add to cart</Text>
-              </TouchableOpacity>
-            </View>
-          </>
-        ) : (
-          <View style={description}>
-            <Text style={descriptionTitle}>Fill your bet</Text>
-            <Text style={descriptionText}>{selectedType.description}</Text>
+            </ScrollView>
           </View>
-        )}
-        <View style={numbersButtons}>
-          {[...new Array(selectedType.range)]
-            .map((value, pos) => `0${pos}`.slice(-2))
-            .map((number) => (
-              <TouchableOpacity
-                style={
-                  numberButton(
-                    selectedNumbers.indexOf(+number) >= 0
-                      ? selectedType.color
-                      : ''
-                  ).btn
-                }
-                key={number}
-                onPress={() => handleSelectNumber(number)}
-              >
-                <Text
+          {selectedNumbers.length > 0 ? (
+            <>
+              <View style={numbersButtons}>
+                {selectedNumbers.map((number) => (
+                  <TouchableOpacity
+                    style={miniNumberButton(selectedType.color).btn}
+                    key={number}
+                    onPress={() => handleSelectNumber(`${number}`)}
+                  >
+                    <Text style={miniNumberButton(selectedType.color).txt}>
+                      {`0${number}`.slice(-2)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <View style={buttons}>
+                <TouchableOpacity onPress={handleCompleteGame} style={button}>
+                  <Text style={buttonText}>Complete game</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleClearGame} style={button}>
+                  <Text style={buttonText}>Clear game</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleAddToCart} style={greenButton}>
+                  <Text style={greenButtonText}>Add to cart</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          ) : (
+            <View style={description}>
+              <Text style={descriptionTitle}>Fill your bet</Text>
+              <Text style={descriptionText}>{selectedType.description}</Text>
+            </View>
+          )}
+          <View style={numbersButtons}>
+            {[...new Array(selectedType.range)]
+              .map((value, pos) => `0${pos}`.slice(-2))
+              .map((number) => (
+                <TouchableOpacity
                   style={
                     numberButton(
                       selectedNumbers.indexOf(+number) >= 0
                         ? selectedType.color
                         : ''
-                    ).txt
+                    ).btn
                   }
+                  key={number}
+                  onPress={() => handleSelectNumber(number)}
                 >
-                  {number}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text
+                    style={
+                      numberButton(
+                        selectedNumbers.indexOf(+number) >= 0
+                          ? selectedType.color
+                          : ''
+                      ).txt
+                    }
+                  >
+                    {number}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+          </View>
         </View>
-      </View>
-      {cartVisible && (
-        <View style={cartOverview}>
-          <View style={cartView}>
-            <View style={cartHeader}>
-              <AntDesign
-                name="shoppingcart"
-                size={24}
-                color={theme.colors.primary}
-              />
-              <Text style={cartTitle}>Cart</Text>
-              <TouchableOpacity
-                onPress={handleHideCart}
-                style={{ marginLeft: 'auto', padding: 4 }}
-              >
+        {cartVisible && (
+          <View style={cartOverview}>
+            <View style={cartView}>
+              <View style={cartHeader}>
                 <AntDesign
-                  name="close"
+                  name="shoppingcart"
                   size={24}
                   color={theme.colors.primary}
                 />
+                <Text style={cartTitle}>Cart</Text>
+                <TouchableOpacity
+                  onPress={handleHideCart}
+                  style={{ marginLeft: 'auto', padding: 4 }}
+                >
+                  <AntDesign
+                    name="close"
+                    size={24}
+                    color={theme.colors.primary}
+                  />
+                </TouchableOpacity>
+              </View>
+              <ScrollView style={{ height: '100%' }}>
+                {cart.length > 0 ? (
+                  cart.map((bet) => (
+                    <View key={bet.id} style={cartItem(bet.type.color).item}>
+                      <View style={cartItem(bet.type.color).before} />
+                      <View style={cartItem(bet.type.color).content}>
+                        <Text style={cartItem(bet.type.color).textBold}>
+                          {bet.numbers
+                            .map((pos) => `0${pos}`.slice(-2))
+                            .join(', ')}
+                        </Text>
+                        <View
+                          style={{ flexDirection: 'row', alignItems: 'center' }}
+                        >
+                          <Text style={cartItem(bet.type.color).textNormal}>
+                            {formatDate(new Date().toISOString())} - (
+                            {formatMoney(bet.type.price)})
+                          </Text>
+                          <TouchableOpacity
+                            onPress={() => handleRemoveFromCart(bet.id)}
+                            style={{ marginLeft: 'auto', padding: 8 }}
+                          >
+                            <Feather
+                              name="trash-2"
+                              size={12}
+                              color={theme.colors.textColor}
+                            />
+                          </TouchableOpacity>
+                        </View>
+                        <Text style={cartItem(bet.type.color).textColor}>
+                          {bet.type.type}
+                        </Text>
+                      </View>
+                    </View>
+                  ))
+                ) : (
+                  <Text>You have no bets in cart.</Text>
+                )}
+              </ScrollView>
+              <View
+                style={{
+                  ...flexRow,
+                  paddingTop: 24,
+                  marginTop: 'auto',
+                }}
+              >
+                <Text style={cartTotal} bold>
+                  Cart{' '}
+                </Text>
+                <Text style={cartTotal}>total:</Text>
+                <Text style={{ ...cartTotal, marginLeft: 'auto' }} bold>
+                  {formatMoney(totalPrice)}
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => handleSaveCart()}
+                style={cartButtonSave}
+              >
+                <Text style={cartButtonSaveText}>
+                  Save{' '}
+                  <MaterialCommunityIcons
+                    name="arrow-right"
+                    size={30}
+                    color={theme.colors.primary}
+                  />
+                </Text>
               </TouchableOpacity>
             </View>
-            <ScrollView style={{ height: '100%' }}>
-              {cart.length > 0 ? (
-                cart.map((bet) => (
-                  <View key={bet.id} style={cartItem(bet.type.color).item}>
-                    <View style={cartItem(bet.type.color).before} />
-                    <View style={cartItem(bet.type.color).content}>
-                      <Text style={cartItem(bet.type.color).textBold}>
-                        {bet.numbers
-                          .map((pos) => `0${pos}`.slice(-2))
-                          .join(', ')}
-                      </Text>
-                      <View
-                        style={{ flexDirection: 'row', alignItems: 'center' }}
-                      >
-                        <Text style={cartItem(bet.type.color).textNormal}>
-                          {formatDate(new Date().toISOString())} - (
-                          {formatMoney(bet.type.price)})
-                        </Text>
-                        <TouchableOpacity
-                          onPress={() => handleRemoveFromCart(bet.id)}
-                          style={{ marginLeft: 'auto', padding: 8 }}
-                        >
-                          <Feather
-                            name="trash-2"
-                            size={12}
-                            color={theme.colors.textColor}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                      <Text style={cartItem(bet.type.color).textColor}>
-                        {bet.type.type}
-                      </Text>
-                    </View>
-                  </View>
-                ))
-              ) : (
-                <Text>You have no bets in cart.</Text>
-              )}
-            </ScrollView>
-            <View
-              style={{
-                ...flexRow,
-                paddingTop: 24,
-                marginTop: 'auto',
-              }}
-            >
-              <Text style={cartTotal} bold>
-                Cart{' '}
-              </Text>
-              <Text style={cartTotal}>total:</Text>
-              <Text style={{ ...cartTotal, marginLeft: 'auto' }} bold>
-                {formatMoney(totalPrice)}
-              </Text>
-            </View>
-            <TouchableOpacity
-              onPress={() => handleSaveCart()}
-              style={cartButtonSave}
-            >
-              <Text style={cartButtonSaveText}>
-                Save{' '}
-                <MaterialCommunityIcons
-                  name="arrow-right"
-                  size={30}
-                  color={theme.colors.primary}
-                />
-              </Text>
-            </TouchableOpacity>
           </View>
-        </View>
-      )}
-      <Footer />
-    </Container>
+        )}
+        <Footer />
+      </Container>
+    </Swipeable>
   );
 };
 

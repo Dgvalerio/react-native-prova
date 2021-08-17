@@ -35,3 +35,6 @@ export const formatDate = (date: string | Date): string =>
       /([\d]+)-([\d]+)-([\d]+)/gm,
       (m, p1, p2, p3) => `${p3}/${p2}/${p1}`
     );
+
+export const wait = (timeout: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, timeout));

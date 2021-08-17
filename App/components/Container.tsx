@@ -5,10 +5,8 @@ import { useSelector } from 'react-redux';
 import { StatusBar } from 'expo-status-bar';
 
 import { container, signedContainer } from '../styles/global';
+import { wait } from '../utils';
 import { useSwipe } from '../utils/hooks';
-
-const wait = (timeout: number) =>
-  new Promise((resolve) => setTimeout(resolve, timeout));
 
 const Container: FC<{
   scrollable?: boolean;
