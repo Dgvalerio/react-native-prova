@@ -26,7 +26,8 @@ import {
   iconText,
   megaIcon,
   activeIconText,
-  ativeBorder,
+  activeBorder,
+  noActiveBorder,
 } from './styles/bottomTab';
 import { theme } from './styles/global';
 import { AuthStackParamList, RootStackParamList } from './types/navigation';
@@ -51,7 +52,7 @@ const AuthNavigation: FC = () => (
         headerShown: false,
         tabBarIcon: ({ focused }) => (
           <View style={iconTab}>
-            <View style={ativeBorder} />
+            <View style={focused ? activeBorder : noActiveBorder} />
             <SimpleLineIcons
               name="home"
               size={24}
@@ -81,7 +82,7 @@ const AuthNavigation: FC = () => (
         headerShown: false,
         tabBarIcon: ({ focused }) => (
           <View style={iconTab}>
-            <View style={ativeBorder} />
+            <View style={focused ? activeBorder : noActiveBorder} />
             <FontAwesome
               name="user-o"
               size={24}

@@ -57,7 +57,7 @@ const SignUp: FC<SignUpProps> = ({ navigation }) => {
       return;
     }
 
-    if (!password === !passwordConfirmation) {
+    if (password !== passwordConfirmation) {
       alert('As senhas não conferem!');
       dispatch(hideLoading());
       return;

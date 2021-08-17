@@ -113,6 +113,10 @@ const Home: FC<RecentGamesProps> = () => {
 
   if (!types || !selectedTypes || !bets) return <Loading />;
 
+  const handleRefresh = () => {
+    loadTypes();
+  };
+
   const handleChangeSelectedType = (type: number) => {
     setSelectedTypes((prev) =>
       prev.indexOf(type) >= 0
@@ -127,7 +131,7 @@ const Home: FC<RecentGamesProps> = () => {
     setPage((prev) => (prev < totalPages ? prev + 1 : prev));
 
   return (
-    <Container>
+    <Container onRefresh={handleRefresh}>
       <View style={header}>
         <View style={headerLogo}>
           <Text style={headerLogoTitle}>TGL</Text>

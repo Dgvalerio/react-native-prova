@@ -3,6 +3,14 @@ import { StyleProp, StyleSheet } from 'react-native';
 
 import { theme } from './global';
 
+export const { flexRow } = StyleSheet.create({
+  flexRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+});
+
 export const {
   header,
   headerLogo,
@@ -104,15 +112,15 @@ export const betItem = (color: string): StyleProp<any> => {
 export const btnType = (active: boolean, color: string): StyleProp<any> => {
   const { btn, text } = StyleSheet.create({
     btn: {
-      paddingHorizontal: 22,
+      paddingHorizontal: 18,
       paddingVertical: 6,
       borderRadius: 100,
       fontWeight: 'bold',
-      fontSize: 14,
+      fontSize: 13,
       backgroundColor: active ? color : '#fff',
       borderWidth: 2,
       borderColor: color,
-      marginRight: 8,
+      marginRight: 6,
     },
     text: {
       color: active ? '#fff' : color,

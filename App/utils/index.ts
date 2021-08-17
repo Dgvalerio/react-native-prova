@@ -24,7 +24,8 @@ export const handleError = (
 
 export const formatMoney = (money: number): string => {
   const aux = `R$ ${money}`.split('.');
-  return `${aux[0]},${`${aux[1]}`.slice(-2)}0`;
+  if (aux.length > 1) return `${aux[0]},${`${aux[1]}`.slice(-2)}0`;
+  return `R$ ${money},00`;
 };
 
 export const formatDate = (date: string | Date): string =>
