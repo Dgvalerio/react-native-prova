@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 
 import { signOut } from '../store/auth/actions';
+import { hideLoading } from '../store/ui/actions';
 import { theme } from '../styles/global';
 import {
   header,
@@ -29,7 +30,10 @@ const Header: FC<{
     | NewBetScreenNavigationProp;
 }> = ({ cartButton = false, onCartPress, navigation }) => {
   const dispatch = useDispatch();
-  const handleSignOut = () => dispatch(signOut());
+  const handleSignOut = () => {
+    dispatch(hideLoading());
+    dispatch(signOut());
+  };
 
   const goHome = () => navigation.navigate('RecentGames');
 
